@@ -5,7 +5,7 @@ use std::{
     future::Future,
     iter::Sum,
     marker::PhantomData,
-    ops::Rem,
+    ops::Mul,
     pin::Pin,
     task::{Context, Poll},
 };
@@ -18,7 +18,7 @@ async fn main() -> Result<(), Error> {
     let adder = Adder;
 
     let mut service = ServiceBuilder::new()
-        .layer(Remainder::<_, Vec<usize>>::new(10))
+        .layer(Cuber::<Vec<usize>>::new())
         .service(adder);
 
     let args = args()
@@ -51,59 +51,75 @@ where
     }
 }
 
-/// A layer that takes the remainder of all numbers in the input.
-struct Remainder<I, T> {
-    divider: I,
-    _phantom: PhantomData<T>,
+/// A layer to cube the output of the previous layer.
+struct Cuber<'a, T> {
+    _phantom: PhantomData<&'a T>,
 }
 
-impl<I, T> Remainder<I, T> {
-    pub fn new(divider: I) -> Self {
+impl<'a, T> Cuber<'a, T> {
+    pub fn new() -> Self {
         Self {
-            divider,
             _phantom: PhantomData,
         }
     }
 }
 
-impl<S, I, T> Layer<S> for Remainder<I, T>
+impl<'a, S, T> Layer<S> for Cuber<'a, T>
 where
     S: Service<T>,
-    I: Copy,
 {
-    type Service = RemainderService<S, I>;
+    type Service = CuberService<'a, S>;
 
     fn layer(&self, service: S) -> Self::Service {
-        RemainderService {
+        CuberService {
             service,
-            divider: self.divider,
+            _phantom: PhantomData,
         }
     }
 }
 
-/// A service wrapper that takes the remainder of all numbers in the input
-/// before passing it to the underlying service.
-struct RemainderService<S, I> {
-    service: S,
-    divider: I,
+/// A service that cubes the output of the inner service.
+struct CuberService<'a, T> {
+    service: T,
+    _phantom: PhantomData<&'a ()>,
 }
 
-impl<S, I, T> Service<T> for RemainderService<S, I>
+impl<'a, S, T> Service<T> for CuberService<'a, S>
 where
     S: Service<T>,
-    I: Rem<I, Output = I> + Sum<I> + Copy,
-    T: IntoIterator<Item = I> + FromIterator<I> + Send + 'static,
+    S::Response: Mul<S::Response, Output = S::Response> + Copy,
+    S::Future: Future<Output = Result<S::Response, S::Error>> + Send + 'a,
 {
     type Response = S::Response;
     type Error = S::Error;
-    type Future = S::Future;
+    type Future = CuberTransform<'a, S::Response, S::Error>;
 
     fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
         self.service.poll_ready(cx)
     }
 
     fn call(&mut self, req: T) -> Self::Future {
-        self.service
-            .call(req.into_iter().map(|v| v % self.divider).collect())
+        CuberTransform {
+            fut: Box::pin(self.service.call(req)),
+        }
+    }
+}
+
+/// Future that cubes the output of the inner service once it's ready.
+struct CuberTransform<'a, I, E> {
+    fut: Pin<Box<dyn Future<Output = Result<I, E>> + Send + 'a>>,
+}
+
+impl<'a, I, E> Future for CuberTransform<'a, I, E>
+where
+    I: Mul<I, Output = I> + Copy,
+{
+    type Output = Result<I, E>;
+
+    fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        match self.fut.as_mut().poll(cx) {
+            Poll::Ready(result) => Poll::Ready(result.map(|v| v * v * v)),
+            Poll::Pending => Poll::Pending,
+        }
     }
 }

@@ -3,6 +3,14 @@
 version = 3
 
 [[package]]
+name = "async-post-wrapper"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+ "tower",
+]
+
+[[package]]
 name = "async-service"
 version = "0.1.0"
 dependencies = [
