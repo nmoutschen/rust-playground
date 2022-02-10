@@ -11,6 +11,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "async-service-wrapper"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+ "tower",
+]
+
+[[package]]
 name = "async-simple"
 version = "0.1.0"
 dependencies = [

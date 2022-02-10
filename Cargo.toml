@@ -3,4 +3,5 @@
 members = [
     "async-simple",
     "async-service",
+    "async-service-wrapper",
 ]
