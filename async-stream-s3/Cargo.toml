@@ -1,0 +1,15 @@
+[package]
+name = "async-stream-s3"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+aws-config = "0.6"
+aws-sdk-s3 = "0.6"
+csv-async = { version = "1.2", features = ["tokio"] }
+serde = { version = "1.0", features = ["derive"] }
+tokio = { version = "1", features = ["full"] }
+tokio-stream = "0.1"
+tokio-util = { version = "0.7", features = ["io"] }
