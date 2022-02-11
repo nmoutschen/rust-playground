@@ -22,8 +22,8 @@ async fn main() -> Result<(), Error> {
     let stream = s3_client
         // Retrieve an object from S3
         .get_object()
-        .bucket(&args[0])
-        .key(&args[1])
+        .bucket(&args[1])
+        .key(&args[2])
         .send()
         .await?
         // Get the body as a stream of bytes
@@ -44,10 +44,10 @@ async fn main() -> Result<(), Error> {
         .create_deserializer(stream_reader);
 
     // Iterate over the CSV rows
-    let mut iter = csv_reader.deserialize();
-    for record in iter.next().await {
+    let mut records = csv_reader.deserialize::<Row>();
+    while let Some(record) = records.next().await {
         let record: Row = record?;
-        println!("{:?}", record.entry);
+        println!("{}", record.entry);
     }
 
     Ok(())
