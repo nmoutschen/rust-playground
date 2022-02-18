@@ -7,4 +7,6 @@ members = [
     "async-post-wrapper",
 
     "async-stream-s3",
+
+    "safety-option-npo",
 ]

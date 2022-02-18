@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use async_compression::tokio::bufread::GzipDecoder;
 use aws_sdk_s3::Client as S3Client;
 use serde::{Deserialize, Deserializer};
