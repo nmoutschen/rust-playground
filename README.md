@@ -20,3 +20,7 @@ cargo run -p $NAME
 ## Safety in Rust
 
 * [Option and Null Pointer Optimization](./safety-option-npo)
+
+## Tower
+
+* [Fault injector layer with AWS Lambda](./tower-fault-injector)

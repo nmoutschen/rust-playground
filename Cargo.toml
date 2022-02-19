@@ -1,12 +1,16 @@
 [workspace]
 
 members = [
+    # Async
     "async-simple",
     "async-service",
     "async-service-wrapper",
     "async-post-wrapper",
-
     "async-stream-s3",
 
+    # Safety
     "safety-option-npo",
+
+    # Tower
+    "tower-lambda-injector",
 ]
