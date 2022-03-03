@@ -77,7 +77,6 @@ async fn main() -> Result<(), Error> {
     Ok(())
 }
 
-
 fn string_to_bool<'de, D>(deserializer: D) -> Result<bool, D::Error>
 where
     D: Deserializer<'de>,
@@ -103,5 +102,8 @@ fn string_split<'de, D>(deserializer: D) -> Result<Vec<String>, D::Error>
 where
     D: Deserializer<'de>,
 {
-    Ok(String::deserialize(deserializer)?.split(',').map(String::from).collect())
+    Ok(String::deserialize(deserializer)?
+        .split(',')
+        .map(String::from)
+        .collect())
 }

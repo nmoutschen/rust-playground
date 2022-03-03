@@ -1,4 +1,4 @@
-use lambda_runtime::{service_fn, Error, LambdaEvent, tower::ServiceBuilder};
+use lambda_runtime::{service_fn, tower::ServiceBuilder, Error, LambdaEvent};
 use serde::{Deserialize, Serialize};
 use tower_fault_injector::LatencyLayer;
 
