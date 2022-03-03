@@ -16,4 +16,7 @@ members = [
 
     # Tower
     "tower-lambda-injector",
+
+    # Types
+    "option-mapping",
 ]
