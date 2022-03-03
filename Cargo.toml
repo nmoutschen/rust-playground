@@ -18,5 +18,6 @@ members = [
     "tower-lambda-injector",
 
     # Types
+    "deref-pizza",
     "option-mapping",
 ]
