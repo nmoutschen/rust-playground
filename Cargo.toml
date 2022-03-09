@@ -14,6 +14,9 @@ members = [
     # Safety
     "safety-option-npo",
 
+    # Testing
+    "test-random-json",
+
     # Tower
     "tower-lambda-injector",
 
