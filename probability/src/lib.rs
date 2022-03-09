@@ -65,29 +65,64 @@ impl error::Error for ProbabilityError {}
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rand::prelude::*;
 
     #[test]
     fn in_bound() {
         let p = Probability::try_from(0.5).unwrap();
-
         assert_eq!(p, Probability(0.5));
     }
 
     #[test]
+    fn randomized_in_bound() {
+        let mut rng = thread_rng();
+
+        for _ in 0..2048 {
+            let inner: f64 = rng.gen_range(0.0..=1.0);
+            let p = Probability::try_from(inner).unwrap();
+            assert_eq!(p, Probability(inner));
+        }
+    }
+
+    #[test]
     fn under_bounds() {
-        let p = Probability::try_from(-0.1).unwrap_err();
-        match p {
+        match Probability::try_from(-0.1).unwrap_err() {
             ProbabilityError::OutOfBounds => (),
             // _ => assert!(false),
         }
     }
 
     #[test]
+    fn randomized_under_bounds() {
+        let mut rng = thread_rng();
+
+        for _ in 0..2048 {
+            let inner: f64 = rng.gen_range(f64::MIN..0.0);
+            match Probability::try_from(inner).unwrap_err() {
+                ProbabilityError::OutOfBounds => (),
+                // _ => assert!(false),
+            }
+        }
+    }
+
+    #[test]
     fn over_bounds() {
-        let p = Probability::try_from(1.1).unwrap_err();
-        match p {
+        match Probability::try_from(1.1).unwrap_err() {
             ProbabilityError::OutOfBounds => (),
             // _ => assert!(false),
+        }
+    }
+
+    #[test]
+    fn randomized_over_bounds() {
+        let mut rng = thread_rng();
+
+        for _ in 0..2048 {
+            let inner: f64 = rng.gen_range(1.1..f64::MAX);
+            match Probability::try_from(inner).unwrap_err() {
+                ProbabilityError::OutOfBounds => (),
+                // _ => assert!(false),
+            }
         }
     }
 
