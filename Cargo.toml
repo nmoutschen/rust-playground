@@ -11,9 +11,6 @@ members = [
     # Lambda
     "lambda-explicitness",
 
-    # Metaprogramming
-    "meta-build",
-
     # Safety
     "safety-option-npo",
 
