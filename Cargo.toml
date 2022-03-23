@@ -21,6 +21,7 @@ members = [
     "tower-lambda-injector",
 
     # Types
+    "enum-use",
     "deref-pizza",
     "option-mapping",
     "probability",
