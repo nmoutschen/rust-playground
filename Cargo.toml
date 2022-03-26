@@ -11,6 +11,9 @@ members = [
     # Lambda
     "lambda-explicitness",
 
+    # Performance
+    "bench-vecmap",
+
     # Safety
     "safety-option-npo",
 
