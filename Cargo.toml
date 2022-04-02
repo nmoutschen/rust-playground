@@ -28,4 +28,7 @@ members = [
     "deref-pizza",
     "option-mapping",
     "probability",
+
+    # User experience
+    "error-serde",
 ]
